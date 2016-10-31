@@ -29,6 +29,7 @@ import java.util.Date;
 
 public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
+
     private static final int REQUEST_WRITE_READ = 1001;
     private static final int REQUEST_CAMERA = 1002;
     private Camera camera;
@@ -39,6 +40,7 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
     private Button buttonTakePicture;
     private ImageButton buttonConfirm;
     private ImageButton buttonCancel;
+    private ImageButton buttonGallery;
 
     private MainActivity self;
     private String mCurrentPhotoPath;
@@ -68,23 +70,26 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
 
         buttonTakePicture = (Button) findViewById(R.id.button_capture);
 
+        buttonGallery = (ImageButton) findViewById(R.id.imageButtonGallery);
         buttonConfirm = (ImageButton) findViewById(R.id.buttonConfirm);
         buttonCancel  = (ImageButton) findViewById(R.id.buttonCancel);
 
         surfaceView = (SurfaceView) findViewById(R.id.surfaceView);
 
+        buttonGallery.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        Intent intent = new Intent(MainActivity.this, ResultsActivity.class);
+                        startActivity(intent);
+                    }
+                }
+        );
+
         buttonTakePicture.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View view) {
-                        if ((Build.VERSION.SDK_INT >= Build.VERSION_CODES.ICE_CREAM_SANDWICH_MR1)
-                                && ((Build.VERSION.SDK_INT < Build.VERSION_CODES.LOLLIPOP))) {
-                            // your code here - is between 15-21
-
-                        } else if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                            // your code here - is api 21
-                            //takePictureFor21OrMore();
-                        }
                         camera.takePicture(null, null, mPicture);
                         buttonTakePicture.setVisibility(View.INVISIBLE);
                         buttonCancel.setVisibility(View.VISIBLE);
@@ -156,14 +161,14 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
                             if (ContextCompat.checkSelfPermission(self, Manifest.permission.WRITE_EXTERNAL_STORAGE)
                                     == PackageManager.PERMISSION_GRANTED &&
                                     ContextCompat.checkSelfPermission(self, Manifest.permission.READ_EXTERNAL_STORAGE)
-                                    == PackageManager.PERMISSION_GRANTED) {
+                                            == PackageManager.PERMISSION_GRANTED) {
 
                                 savePhoto(bitmap);
 
                             } else {
                                 ActivityCompat.requestPermissions(self,
                                         new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                                        Manifest.permission.READ_EXTERNAL_STORAGE},
+                                                Manifest.permission.READ_EXTERNAL_STORAGE},
                                         REQUEST_WRITE_READ);
                             }
                         }
@@ -227,4 +232,5 @@ public class MainActivity extends Activity implements SurfaceHolder.Callback {
             }
         }
     }
+
 }

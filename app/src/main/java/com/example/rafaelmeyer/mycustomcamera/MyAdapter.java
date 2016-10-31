@@ -15,7 +15,8 @@ import java.io.File;
  */
 public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
 
-    private File imagesFile;
+    public File imagesFile;
+    public RecyclerViewOnClickListener myRecyclerViewOnClickListener;
 
     public File getImagesFile() {
         return imagesFile;
@@ -46,13 +47,30 @@ public class MyAdapter extends RecyclerView.Adapter<MyAdapter.ViewHolder> {
         return getImagesFile().listFiles().length;
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder {
+    public class ViewHolder extends RecyclerView.ViewHolder implements View.OnClickListener {
         ImageView imageViewItem;
 
         public ViewHolder(View itemView) {
             super(itemView);
 
             imageViewItem = (ImageView) itemView.findViewById(R.id.imageViewItem);
+            imageViewItem.setOnClickListener(this);
+            itemView.setOnClickListener(this);
         }
+
+        @Override
+        public void onClick(View v) {
+            if (myRecyclerViewOnClickListener != null) {
+                myRecyclerViewOnClickListener.onClickListenerToDelete(v, getImagesFile().listFiles()[getPosition()]);
+            }
+        }
+    }
+
+    public interface RecyclerViewOnClickListener {
+        void onClickListenerToDelete(View view, File imageModel);
+    }
+
+    public void setMyRecyclerViewOnClickListener(RecyclerViewOnClickListener myRecyclerViewOnClickListener) {
+        this.myRecyclerViewOnClickListener = myRecyclerViewOnClickListener;
     }
 }

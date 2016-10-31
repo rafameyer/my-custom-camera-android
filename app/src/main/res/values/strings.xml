@@ -1,3 +1,4 @@
 <resources>
-    <string name="app_name">MyCustomCamera</string>
+    <string name="app_name">My Custom Camera</string>
+    <string name="app_gallery">Gallery</string>
 </resources>
