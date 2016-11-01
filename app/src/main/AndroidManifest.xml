@@ -34,7 +34,8 @@
             </intent-filter>
         </activity>
         <activity android:name=".ResultsActivity"
-            android:label="@string/app_gallery"
+            android:label=""
+            android:theme="@style/Theme.AppCompat.Light.NoActionBar"
             android:screenOrientation="portrait">
             <meta-data
                 android:name="android.support.PARENT_ACTIVITY"

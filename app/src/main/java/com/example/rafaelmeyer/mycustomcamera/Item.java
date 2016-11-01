@@ -1,27 +1,31 @@
 package com.example.rafaelmeyer.mycustomcamera;
 
 /**
- * Created by rafael.meyer on 10/26/16.
+ * Created by rafael.meyer on 11/1/16.
  */
 public class Item {
 
-    private String id;
-    private String name;
+    private String filePhoto;
+    private Boolean isSelected;
 
-    public String getId() {
-        return id;
+    public Item(String filePhoto, Boolean isSelected) {
+        this.filePhoto = filePhoto;
+        this.isSelected = isSelected;
     }
 
-    public void setId(String id) {
-        this.id = id;
+    public String getFilePhoto() {
+        return filePhoto;
     }
 
-    public String getName() {
-        return name;
+    public void setFilePhoto(String filePhoto) {
+        this.filePhoto = filePhoto;
     }
 
-    public void setName(String name) {
-        this.name = name;
+    public Boolean getSelected() {
+        return isSelected;
     }
 
+    public void setSelected(Boolean selected) {
+        isSelected = selected;
+    }
 }
