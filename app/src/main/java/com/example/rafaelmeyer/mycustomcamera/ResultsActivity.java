@@ -1,5 +1,8 @@
 package com.example.rafaelmeyer.mycustomcamera;
 
+import android.content.Intent;
+import android.support.v4.app.ActivityCompat;
+import android.support.v4.app.ActivityOptionsCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.support.v7.widget.GridLayoutManager;
@@ -28,16 +31,21 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
     private Toolbar toolbar;
     private TextView textViewLabel;
     private ImageView imageViewDeleteToolbar;
-    private ImageView imageViewBackArroyToolbar;
+    private ImageView imageViewBackArrowToolbar;
+    private ImageView imageViewUnselectedToolbar;
+
     private boolean isFirstActivity = false;
+    private int countSelected;
 
     @Override
     protected void onResume() {
         super.onResume();
         if (isFirstActivity) {
             imageViewDeleteToolbar.setVisibility(View.VISIBLE);
-        } else {
+            imageViewUnselectedToolbar.setVisibility(View.VISIBLE);
+        } else if (countSelected == 0) {
             imageViewDeleteToolbar.setVisibility(View.INVISIBLE);
+            imageViewUnselectedToolbar.setVisibility(View.INVISIBLE);
         }
     }
 
@@ -50,8 +58,9 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
 
         toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        imageViewBackArroyToolbar = (ImageView) findViewById(R.id.imageViewBackArroyToolbar);
-        imageViewBackArroyToolbar.setOnClickListener(
+
+        imageViewBackArrowToolbar = (ImageView) findViewById(R.id.imageViewBackArrowToolbar);
+        imageViewBackArrowToolbar.setOnClickListener(
                 new View.OnClickListener() {
                     @Override
                     public void onClick(View v) {
@@ -63,6 +72,16 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
         textViewLabel = (TextView) findViewById(R.id.textViewTitleToolbar);
         textViewLabel.setText(titleToolbar);
 
+        imageViewUnselectedToolbar = (ImageView) findViewById(R.id.imageViewUnselectedToolbar);
+        imageViewUnselectedToolbar.setOnClickListener(
+                new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+                        removeItemSelected();
+                    }
+                }
+        );
+
         imageViewDeleteToolbar = (ImageView) findViewById(R.id.imageViewDeleteToolbar);
         imageViewDeleteToolbar.setOnClickListener(
                 new View.OnClickListener() {
@@ -72,10 +91,6 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
                     }
                 }
         );
-
-        if (isFirstActivity) {
-
-        }
 
         for (int i = 0; i < mGalleryFolder.listFiles().length; i++) {
             String file = mGalleryFolder.listFiles()[i].toString();
@@ -93,15 +108,37 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
         mAdapter.setMyOnPassSelected(this);
     }
 
+    private void removeItemSelected() {
+        int size = mGalleryFolder.listFiles().length - 1;
+        for (int i = size; i >= 0 ; i--) {
+            if (itemList.get(i).getSelected()) {
+                itemList.get(i).setSelected(false);
+                mAdapter.setCountSelected(mAdapter.getCountSelected() - 1);
+            }
+        }
+        countSelected = 0;
+        mAdapter.isFirst = false;
+        mAdapter.notifyDataSetChanged();
+        imageViewUnselectedToolbar.setVisibility(View.INVISIBLE);
+        imageViewDeleteToolbar.setVisibility(View.INVISIBLE);
+        textViewLabel.setText("Gallery");
+    }
+
     private void deleteAllItemsSelected() {
         int size = mGalleryFolder.listFiles().length - 1;
         for (int i = size; i >= 0 ; i--) {
             if (itemList.get(i).getSelected()) {
+                itemList.get(i).setSelected(false);
                 File fileModel = mGalleryFolder.listFiles()[i];
                 fileModel.delete();
+                mAdapter.setCountSelected(mAdapter.getCountSelected() - 1);
             }
         }
         mAdapter.notifyDataSetChanged();
+        mAdapter.isFirst = false;
+        textViewLabel.setText("Gallery");
+        imageViewDeleteToolbar.setVisibility(View.INVISIBLE);
+        imageViewUnselectedToolbar.setVisibility(View.INVISIBLE);
     }
 
     @Override
@@ -112,14 +149,52 @@ public class ResultsActivity extends AppCompatActivity implements MyAdapter.OnPa
     }
 
     @Override
-    public void onPassSelected() {
+    public void onPassSelected(View view, File imageModel, Boolean isFirst, int count) {
+        isFirstActivity = isFirst;
+        countSelected = count;
         onResume();
+
+        if (count == 0) {
+            imageViewDeleteToolbar.setVisibility(View.INVISIBLE);
+            imageViewUnselectedToolbar.setVisibility(View.INVISIBLE);
+        }
+
+        if (count == 0) {
+            textViewLabel.setText("Gallery");
+        }
+        if (count > 0){
+            textViewLabel.setText(countSelected + " Selected");
+        }
+
+        if (!isFirst && count == 0) {
+            String transition = "photo";
+
+            View viewStart = view.findViewById(R.id.imageViewItem);
+
+            Intent intent = new Intent(ResultsActivity.this, PhotoActivity.class);
+            ActivityOptionsCompat optionsCompat
+                    = ActivityOptionsCompat.makeSceneTransitionAnimation(this, viewStart, transition);
+
+            intent.putExtra("image", imageModel);
+
+            ActivityOptionsCompat.makeSceneTransitionAnimation(this, viewStart, transition);
+            ActivityCompat.startActivity(this, intent, optionsCompat.toBundle());
+        }
     }
 
     @Override
-    public void onPassFirstSelected(Boolean isFist) {
+    public void onPassFirstSelected(Boolean isFist, int count) {
         Log.d("Results",isFist.toString());
         isFirstActivity = isFist;
+        countSelected = count;
+
+        if (count == 0) {
+            textViewLabel.setText("Gallery");
+        }
+        if (count > 0){
+            textViewLabel.setText(count + " Selected");
+        }
+
         onResume();
     }
 }

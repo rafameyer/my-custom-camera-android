@@ -3,4 +3,5 @@
     <string name="app_gallery">Gallery</string>
     <string name="delete_item_select">Delete item(s)</string>
     <string name="selected_count">%1$s selected</string>
+    <string name="transition_string">photo</string>
 </resources>

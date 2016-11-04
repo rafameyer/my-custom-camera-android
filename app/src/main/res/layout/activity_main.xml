@@ -7,15 +7,15 @@
 
     <ImageButton
         android:elevation="6dp"
-        android:layout_margin="16dp"
+        android:layout_margin="24dp"
         android:id="@+id/imageButtonGallery"
         android:layout_alignParentTop="true"
         android:background="@color/transparent"
         android:tint="@color/cardview_light_background"
         android:src="@drawable/ic_photo_library_black_24dp"
         android:layout_alignParentRight="true"
-        android:layout_width="24dp"
-        android:layout_height="24dp" />
+        android:layout_width="32dp"
+        android:layout_height="32dp" />
 
     <SurfaceView
         android:id="@+id/surfaceView"
